@@ -46,7 +46,7 @@
                 <div>
                     <h1 class="font-bold text-lg leading-tight flex items-center">
                         Smart Check-In
-                        <span class="ml-2 text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-semibold px-2 py-0.5 rounded-full">v4.0 Direct Sync</span>
+                        <span class="ml-2 text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-semibold px-2 py-0.5 rounded-full">v4.1 Fixed</span>
                     </h1>
                     <p class="text-xs text-slate-400">ระบบเช็คชื่อข้ามอุปกรณ์ Real-time</p>
                 </div>
@@ -119,7 +119,7 @@
                                 เลือกชื่อ-นามสกุลของคุณ
                             </label>
                             <select id="student-dropdown" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3.5 text-slate-800 font-medium focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm text-sm">
-                                <option value="">-- กำลังโหลดรายชื่อนักเรียน --</option>
+                                <option value="">-- ดึงข้อมูลรายชื่อ... --</option>
                             </select>
                         </div>
 
@@ -351,7 +351,7 @@
 
     </main>
 
-    <!-- JS LOGIC DIRECT SYNC -->
+    <!-- JS LOGIC DIRECT SYNC FIXED -->
     <script>
         const CLOUD_DB_BASE_URL = "https://checkin-realtime-default-rtdb.asia-southeast1.firebasedatabase.app";
 
@@ -453,13 +453,13 @@
                 const classStudents = window.appState.students.filter(s => s.classId === classId);
 
                 if (classStudents.length === 0) {
-                    Swal.fire({ icon: 'error', title: 'ไม่พบนักเรียนในห้องเรียนนี้', text: 'โปรดเพิ่มนักเรียนก่อนเริ่มคาบเรียนครับ' });
+                    Swal.fire({ icon: 'error', title: 'ไม่พบนักเรียนในห้องเรียนนี้', text: 'โปรดเพิ่มนักเรียนในเมนูก่อนครับ' });
                     return;
                 }
 
                 currentSessionId = 'S_' + Date.now();
                 
-                // สร้าง object นักเรียนแบบ Key-Value
+                // สร้าง Object นักเรียนและส่งขึ้น คลาวด์ ทันที
                 const sessionStudentsMap = {};
                 classStudents.forEach(s => {
                     sessionStudentsMap[s.id] = {
@@ -484,7 +484,6 @@
                 currentSessionData = payload;
                 renderTeacherLiveTable(payload);
 
-                // บันทึกขึ้น Cloud ทันที
                 try {
                     await fetch(`${CLOUD_DB_BASE_URL}/activeSessions/${currentSessionId}.json`, {
                         method: 'PUT',
@@ -547,12 +546,9 @@
             const tbody = document.getElementById('live-students-tbody');
             if (!sessionData || !sessionData.students) return;
 
-            let studentsList = [];
-            if (Array.isArray(sessionData.students)) {
-                studentsList = sessionData.students.filter(Boolean);
-            } else {
-                studentsList = Object.values(sessionData.students);
-            }
+            let studentsList = Array.isArray(sessionData.students) 
+                ? sessionData.students.filter(Boolean) 
+                : Object.values(sessionData.students);
                 
             studentsList.sort((a, b) => (a.no || 0) - (b.no || 0));
 
@@ -633,7 +629,7 @@
             Swal.fire({ icon: 'success', title: 'คัดลอกลิงก์เรียบร้อย', timer: 1000, showConfirmButton: false });
         }
 
-        // --- STUDENT side FETCHING ---
+        // --- STUDENT FETCH FIX ---
         async function fetchStudentSessionData() {
             const loadingState = document.getElementById('student-state-loading');
             const closedState = document.getElementById('student-state-closed');
@@ -663,13 +659,24 @@
                 const previousVal = dropdown.value;
                 
                 let studentsData = data.students || {};
-                let studentsList = Array.isArray(studentsData) ? studentsData.filter(Boolean) : Object.values(studentsData);
+                let studentsList = [];
+
+                if (Array.isArray(studentsData)) {
+                    studentsList = studentsData.filter(Boolean);
+                } else if (typeof studentsData === 'object') {
+                    studentsList = Object.values(studentsData);
+                }
+
+                // Fallback ถ้ารายชื่อจากคลาวด์ยังไม่มา ให้ใช้รายชื่อ local
+                if (studentsList.length === 0 && window.appState.students) {
+                    studentsList = window.appState.students;
+                }
 
                 studentsList.sort((a,b) => (a.no || 0) - (b.no || 0));
 
                 if (studentsList.length > 0) {
                     dropdown.innerHTML = '<option value="">-- เลือกชื่อของคุณ --</option>' + 
-                        studentsList.map(s => `<option value="${s.id}">${s.no}. ${s.name} (${s.stdId})</option>`).join('');
+                        studentsList.map(s => `<option value="${s.id}">${s.no}. ${s.name} (${s.stdId || ''})</option>`).join('');
                     if (previousVal) dropdown.value = previousVal;
                 }
 
