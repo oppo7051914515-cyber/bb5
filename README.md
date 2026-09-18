@@ -9,7 +9,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
     <script>
         tailwind.config = {
             theme: {
@@ -47,9 +46,9 @@
                 <div>
                     <h1 class="font-bold text-lg leading-tight flex items-center">
                         Smart Check-In
-                        <span class="ml-2 text-[10px] bg-blue-500/20 text-blue-400 border border-blue-500/30 font-semibold px-2 py-0.5 rounded-full">v3.8 Student List Hotfix</span>
+                        <span class="ml-2 text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-semibold px-2 py-0.5 rounded-full">v4.0 Direct Sync</span>
                     </h1>
-                    <p class="text-xs text-slate-400">ระบบเช็คชื่อข้ามอุปกรณ์และข้ามเครือข่าย Real-time Cloud</p>
+                    <p class="text-xs text-slate-400">ระบบเช็คชื่อข้ามอุปกรณ์ Real-time</p>
                 </div>
             </div>
             
@@ -71,7 +70,7 @@
             <div class="flex items-center space-x-2">
                 <span id="sync-status" class="inline-flex items-center text-xs px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium">
                     <span class="w-2 h-2 rounded-full bg-emerald-400 mr-1.5 pulse-slow"></span>
-                    <span>Ready</span>
+                    <span>Direct Active</span>
                 </span>
             </div>
         </div>
@@ -87,24 +86,23 @@
                     <i class="fa-solid fa-qrcode text-3xl"></i>
                 </div>
                 <h1 class="text-xl font-bold text-slate-800">ระบบเช็คชื่อนักเรียนออนไลน์</h1>
-                <p class="text-xs text-slate-500">เลือกชื่อของคุณและขอรับรหัส OTP เพื่อเช็คชื่อ</p>
+                <p class="text-xs text-slate-500">เลือกชื่อของคุณเพื่อขอรหัส OTP เข้าเรียน</p>
             </div>
 
             <div class="glass-card rounded-2xl shadow-xl p-6 text-center border-t-4 border-blue-600 relative overflow-hidden">
                 <div id="student-state-loading" class="py-8 space-y-3">
                     <i class="fa-solid fa-circle-notch animate-spin text-4xl text-blue-600"></i>
-                    <h3 class="text-base font-bold text-slate-700">กำลังดึงข้อมูลรายชื่อ...</h3>
-                    <p class="text-xs text-slate-400">กรุณารอสักครู่ ระบบกำลังโหลดรายชื่อนักเรียน</p>
+                    <h3 class="text-base font-bold text-slate-700">กำลังเชื่อมต่อรายชื่อ...</h3>
                 </div>
 
                 <div id="student-state-closed" class="hidden py-4">
                     <div class="w-16 h-16 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl shadow-inner border border-rose-100">
                         <i class="fa-solid fa-triangle-exclamation"></i>
                     </div>
-                    <h2 class="text-xl font-bold text-slate-800" id="closed-title">ไม่พบคาบเรียน หรือ คาบเรียนถูกปิดแล้ว</h2>
-                    <p class="text-xs text-slate-500 mt-2 mb-4">กรุณาแจ้งคุณครูให้ตรวจสอบการเปิดคาบเรียน</p>
-                    <button onclick="fetchStudentSessionData(true)" class="inline-flex items-center text-xs bg-blue-50 hover:bg-blue-100 text-blue-600 font-semibold px-4 py-2 rounded-xl transition border border-blue-200">
-                        <i class="fa-solid fa-rotate mr-1.5"></i> ลองเชื่อมต่ออีกครั้ง
+                    <h2 class="text-xl font-bold text-slate-800">ไม่พบคาบเรียน หรือ คาบเรียนถูกปิดแล้ว</h2>
+                    <p class="text-xs text-slate-500 mt-2 mb-4">โปรดแจ้งคุณครูผู้สอนให้ตรวจสอบการเปิดคาบเรียน</p>
+                    <button onclick="fetchStudentSessionData()" class="inline-flex items-center text-xs bg-blue-50 hover:bg-blue-100 text-blue-600 font-semibold px-4 py-2 rounded-xl transition border border-blue-200">
+                        <i class="fa-solid fa-rotate mr-1.5"></i> ลองโหลดข้อมูลใหม่
                     </button>
                 </div>
 
@@ -117,15 +115,9 @@
 
                     <div id="student-step-select" class="space-y-4">
                         <div class="text-left">
-                            <div class="flex justify-between items-center mb-2">
-                                <label class="block text-xs font-bold text-slate-700 uppercase flex items-center">
-                                    <span class="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] mr-1.5">1</span>
-                                    เลือกชื่อ-นามสกุลของคุณ
-                                </label>
-                                <button onclick="fetchStudentSessionData(true)" class="text-[11px] text-blue-600 hover:text-blue-800 font-semibold flex items-center">
-                                    <i class="fa-solid fa-arrows-rotate mr-1"></i> โหลดชื่อซ้ำ
-                                </button>
-                            </div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-2">
+                                เลือกชื่อ-นามสกุลของคุณ
+                            </label>
                             <select id="student-dropdown" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3.5 text-slate-800 font-medium focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm text-sm">
                                 <option value="">-- กำลังโหลดรายชื่อนักเรียน --</option>
                             </select>
@@ -149,8 +141,8 @@
                         <div class="w-16 h-16 bg-emerald-500 text-white rounded-full flex items-center justify-center mx-auto text-2xl shadow-lg shadow-emerald-500/30">
                             <i class="fa-solid fa-check text-3xl"></i>
                         </div>
-                        <h3 class="font-bold text-2xl text-emerald-800">เช็คชื่อสำเร็จแล้ว! 🟢</h3>
-                        <p class="text-xs text-emerald-700 font-medium">คุณครูยืนยันการเข้าเรียนเรียบร้อยแล้ว ขอบคุณครับ</p>
+                        <h3 class="font-bold text-2xl text-emerald-800">เช็คชื่อสำเร็จ! 🟢</h3>
+                        <p class="text-xs text-emerald-700 font-medium">คุณครูยืนยันการเข้าเรียนเรียบร้อยแล้ว</p>
                     </div>
                 </div>
             </div>
@@ -189,7 +181,6 @@
                         <div class="bg-slate-50 rounded-xl p-3 mb-4 border border-slate-200">
                             <h3 class="font-bold text-slate-800 text-xl" id="live-class-name">ห้องเรียน</h3>
                             <p class="text-sm font-semibold text-blue-600 mt-1" id="live-subject-name">วิชา: -</p>
-                            <p class="text-xs text-slate-400 mt-1" id="live-class-desc">คำอธิบายห้องเรียน</p>
                         </div>
                         
                         <div class="bg-white p-4 rounded-2xl shadow-inner inline-block border border-slate-200">
@@ -229,7 +220,6 @@
                                         ตารางเช็คชื่อนักเรียน Real-time
                                         <span class="ml-2 w-2.5 h-2.5 rounded-full bg-emerald-500 pulse-slow"></span>
                                     </h3>
-                                    <p class="text-xs text-slate-500">ข้อมูลจะอัปเดตและซิงค์รายชื่อทันทีเมื่อเปิดคาบเรียน</p>
                                 </div>
                                 <div class="flex space-x-2 text-xs font-semibold">
                                     <span class="px-3 py-1.5 rounded-lg bg-red-50 text-red-700 border border-red-200">🔴 ยังไม่เช็ค: <span id="cnt-absent">0</span></span>
@@ -252,7 +242,7 @@
                                     </thead>
                                     <tbody id="live-students-tbody" class="divide-y divide-slate-100 bg-white">
                                         <tr>
-                                            <td colspan="6" class="text-center py-8 text-slate-400">กรุณาเลือกห้องเรียนและเปิดคาบเรียนเพื่อแสดงรายชื่อ...</td>
+                                            <td colspan="6" class="text-center py-8 text-slate-400">กรุณาเลือกห้องเรียนและเปิดคาบเรียน...</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -263,7 +253,7 @@
             </div>
         </div>
 
-        <!-- OTHER TABS -->
+        <!-- MANAGEMENTS TABS -->
         <div id="tab-classes" class="tab-content hidden space-y-6">
             <div class="glass-card rounded-2xl p-6 shadow-sm border border-slate-200">
                 <h3 class="font-bold text-lg text-slate-800 mb-4 flex items-center">
@@ -361,7 +351,7 @@
 
     </main>
 
-    <!-- JS LOGIC -->
+    <!-- JS LOGIC DIRECT SYNC -->
     <script>
         const CLOUD_DB_BASE_URL = "https://checkin-realtime-default-rtdb.asia-southeast1.firebasedatabase.app";
 
@@ -370,11 +360,7 @@
         let currentSessionData = null;
         let currentStudentSelectedId = null;
 
-        // ข้อมูลตั้งต้นเพื่อป้องกันปัญหาหน้าจอว่างเปล่า
-        const defaultClasses = [
-            { id: 'c1', name: 'ม.4/1', desc: 'สายวิทยาศาสตร์-คณิตศาสตร์' }
-        ];
-
+        const defaultClasses = [{ id: 'c1', name: 'ม.4/1', desc: 'สายวิทยาศาสตร์-คณิตศาสตร์' }];
         const defaultStudents = [
             { id: 's1', classId: 'c1', no: 1, stdId: '10001', name: 'นายกิตติพงษ์ วงศ์สว่าง' },
             { id: 's2', classId: 'c1', no: 2, stdId: '10002', name: 'นางสาวจิราพร แสงทอง' },
@@ -387,7 +373,6 @@
             history: JSON.parse(localStorage.getItem('sc_history')) || []
         };
 
-        // หาก LocalStorage ยังไม่มี ให้บันทึกชุดข้อมูลเริ่มต้นลงไปทันที
         if (!localStorage.getItem('sc_classes')) saveState();
 
         function saveState() {
@@ -416,7 +401,7 @@
                 document.getElementById('student-view').classList.remove('hidden');
                 
                 fetchStudentSessionData();
-                pollingInterval = setInterval(fetchStudentSessionData, 2000);
+                pollingInterval = setInterval(fetchStudentSessionData, 1500);
             } else {
                 populateClassDropdowns();
                 renderClassesList();
@@ -468,14 +453,16 @@
                 const classStudents = window.appState.students.filter(s => s.classId === classId);
 
                 if (classStudents.length === 0) {
-                    Swal.fire({ icon: 'error', title: 'ไม่พบน้องๆ ในห้องเรียนนี้', text: 'กรุณาไปที่เมนู "จัดการนักเรียน" เพื่อเพิ่มรายชื่อนักเรียนก่อนครับ' });
+                    Swal.fire({ icon: 'error', title: 'ไม่พบนักเรียนในห้องเรียนนี้', text: 'โปรดเพิ่มนักเรียนก่อนเริ่มคาบเรียนครับ' });
                     return;
                 }
 
                 currentSessionId = 'S_' + Date.now();
-                const sessionStudents = {};
+                
+                // สร้าง object นักเรียนแบบ Key-Value
+                const sessionStudentsMap = {};
                 classStudents.forEach(s => {
-                    sessionStudents[s.id] = {
+                    sessionStudentsMap[s.id] = {
                         id: s.id,
                         no: s.no,
                         stdId: s.stdId,
@@ -489,17 +476,15 @@
                     sessionId: currentSessionId,
                     classId: selectedClass.id,
                     className: selectedClass.name,
-                    classDesc: selectedClass.desc || '',
                     subject: subject,
-                    timestamp: new Date().toISOString(),
                     active: true,
-                    students: sessionStudents
+                    students: sessionStudentsMap
                 };
 
-                // แสดงตารางนักเรียนในฝั่งครูทันทีจากข้อมูล local
                 currentSessionData = payload;
                 renderTeacherLiveTable(payload);
 
+                // บันทึกขึ้น Cloud ทันที
                 try {
                     await fetch(`${CLOUD_DB_BASE_URL}/activeSessions/${currentSessionId}.json`, {
                         method: 'PUT',
@@ -507,7 +492,7 @@
                         body: JSON.stringify(payload)
                     });
                 } catch (e) {
-                    console.warn("Cloud connection error, running in local mode:", e);
+                    console.error("Cloud push failed", e);
                 }
 
                 btn.className = "w-full bg-rose-600 hover:bg-rose-700 active:scale-95 text-white font-semibold p-3 rounded-xl shadow-md transition duration-200 flex items-center justify-center space-x-2 text-sm";
@@ -518,38 +503,19 @@
                 document.getElementById('active-session-container').classList.remove('hidden');
                 document.getElementById('live-class-name').textContent = selectedClass.name;
                 document.getElementById('live-subject-name').textContent = `วิชา: ${subject}`;
-                document.getElementById('live-class-desc').textContent = selectedClass.desc || 'ไม่มีคำอธิบาย';
 
                 const baseUrl = window.location.origin + window.location.pathname;
                 const studentUrl = `${baseUrl}?session=${currentSessionId}`;
                 document.getElementById('session-link-input').value = studentUrl;
                 
                 document.getElementById('qrcode').innerHTML = '';
-                new QRCode(document.getElementById("qrcode"), {
-                    text: studentUrl,
-                    width: 160,
-                    height: 160
-                });
+                new QRCode(document.getElementById("qrcode"), { text: studentUrl, width: 160, height: 160 });
 
                 pollingInterval = setInterval(fetchTeacherSessionData, 1500);
-                Swal.fire({ icon: 'success', title: 'เปิดคาบเรียนสำเร็จ', timer: 1500, showConfirmButton: false });
+                Swal.fire({ icon: 'success', title: 'เปิดคาบเรียนสำเร็จ!', timer: 1200, showConfirmButton: false });
 
             } else {
                 clearInterval(pollingInterval);
-                
-                if (currentSessionData) {
-                    const presentCount = Object.values(currentSessionData.students || {}).filter(s => s.status === 'present').length;
-                    const totalCount = Object.keys(currentSessionData.students || {}).length;
-                    window.appState.history.unshift({
-                        timestamp: new Date().toLocaleString('th-TH'),
-                        className: currentSessionData.className,
-                        subject: currentSessionData.subject,
-                        stats: `${presentCount}/${totalCount}`
-                    });
-                    saveState();
-                    renderReports();
-                }
-
                 try {
                     await fetch(`${CLOUD_DB_BASE_URL}/activeSessions/${currentSessionId}.json`, { method: 'DELETE' });
                 } catch (e) {}
@@ -561,7 +527,7 @@
                 classSelect.disabled = false;
                 subjectInput.disabled = false;
                 document.getElementById('active-session-container').classList.add('hidden');
-                Swal.fire({ icon: 'info', title: 'ปิดคาบเรียนแล้ว', timer: 1500, showConfirmButton: false });
+                Swal.fire({ icon: 'info', title: 'ปิดคาบเรียนแล้ว', timer: 1200, showConfirmButton: false });
             }
         }
 
@@ -574,31 +540,23 @@
                     currentSessionData = data;
                     renderTeacherLiveTable(data);
                 }
-            } catch (e) {
-                console.error(e);
-            }
+            } catch (e) {}
         }
 
         function renderTeacherLiveTable(sessionData) {
             const tbody = document.getElementById('live-students-tbody');
             if (!sessionData || !sessionData.students) return;
 
-            document.getElementById('live-class-name').textContent = sessionData.className || 'ไม่ระบุห้องเรียน';
-            document.getElementById('live-subject-name').textContent = `วิชา: ${sessionData.subject || '-'}`;
-
-            let rawStudents = sessionData.students;
-            let studentsList = Array.isArray(rawStudents) 
-                ? rawStudents.filter(Boolean) 
-                : Object.values(rawStudents);
+            let studentsList = [];
+            if (Array.isArray(sessionData.students)) {
+                studentsList = sessionData.students.filter(Boolean);
+            } else {
+                studentsList = Object.values(sessionData.students);
+            }
                 
             studentsList.sort((a, b) => (a.no || 0) - (b.no || 0));
 
             let presentCount = 0, pendingCount = 0, absentCount = 0;
-
-            if (studentsList.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-slate-400">ไม่พบรายชื่อนักเรียนในห้องนี้</td></tr>`;
-                return;
-            }
 
             tbody.innerHTML = studentsList.map(s => {
                 let statusBadge = '', actionBtn = '';
@@ -649,10 +607,7 @@
         async function verifyTeacherOTP() {
             const input = document.getElementById('teacher-otp-input');
             const otpCode = input.value.trim();
-            if (!otpCode || otpCode.length !== 6) {
-                Swal.fire({ icon: 'warning', title: 'กรุณากรอกรหัส OTP 6 หลัก' });
-                return;
-            }
+            if (!otpCode || otpCode.length !== 6) return;
 
             if (!currentSessionData || !currentSessionData.students) return;
 
@@ -665,9 +620,9 @@
             if (student) {
                 await approveStudent(student.id);
                 input.value = '';
-                Swal.fire({ icon: 'success', title: `ยืนยันคุณ ${student.name} สำเร็จ`, timer: 1500, showConfirmButton: false });
+                Swal.fire({ icon: 'success', title: `ยืนยันคุณ ${student.name} สำเร็จ`, timer: 1200, showConfirmButton: false });
             } else {
-                Swal.fire({ icon: 'error', title: 'รหัส OTP ไม่ถูกต้อง หรือนักเรียนไม่ได้รออนุมัติ' });
+                Swal.fire({ icon: 'error', title: 'รหัส OTP ไม่ถูกต้อง' });
             }
         }
 
@@ -675,11 +630,11 @@
             const input = document.getElementById('session-link-input');
             input.select();
             document.execCommand('copy');
-            Swal.fire({ icon: 'success', title: 'คัดลอกลิงก์สำเร็จแล้ว', timer: 1200, showConfirmButton: false });
+            Swal.fire({ icon: 'success', title: 'คัดลอกลิงก์เรียบร้อย', timer: 1000, showConfirmButton: false });
         }
 
-        // Student Data Handling
-        async function fetchStudentSessionData(manualRefresh = false) {
+        // --- STUDENT side FETCHING ---
+        async function fetchStudentSessionData() {
             const loadingState = document.getElementById('student-state-loading');
             const closedState = document.getElementById('student-state-closed');
             const activeState = document.getElementById('student-state-active');
@@ -687,8 +642,8 @@
             if (!currentSessionId) currentSessionId = getSessionIdFromUrl();
 
             try {
-                let res = await fetch(`${CLOUD_DB_BASE_URL}/activeSessions/${currentSessionId}.json`);
-                let data = await res.json();
+                const res = await fetch(`${CLOUD_DB_BASE_URL}/activeSessions/${currentSessionId}.json`);
+                const data = await res.json();
 
                 if (!data) {
                     loadingState.classList.add('hidden');
@@ -716,8 +671,6 @@
                     dropdown.innerHTML = '<option value="">-- เลือกชื่อของคุณ --</option>' + 
                         studentsList.map(s => `<option value="${s.id}">${s.no}. ${s.name} (${s.stdId})</option>`).join('');
                     if (previousVal) dropdown.value = previousVal;
-                } else {
-                    dropdown.innerHTML = '<option value="">-- ไม่พบรายชื่อนักเรียนในคาบนี้ --</option>';
                 }
 
                 if (currentStudentSelectedId && studentsData[currentStudentSelectedId]) {
@@ -743,7 +696,7 @@
             const selectedId = dropdown.value;
 
             if (!selectedId) {
-                Swal.fire({ icon: 'warning', title: 'โปรดเลือกชื่อ-นามสกุลของคุณ' });
+                Swal.fire({ icon: 'warning', title: 'โปรดเลือกชื่อของคุณ' });
                 return;
             }
 
@@ -761,18 +714,15 @@
                 document.getElementById('student-step-otp').classList.remove('hidden');
                 document.getElementById('display-otp-code').textContent = otp;
             } catch (e) {
-                Swal.fire({ icon: 'error', title: 'ขอรหัส OTP ไม่สำเร็จ', text: e.message });
+                Swal.fire({ icon: 'error', title: 'เกิดข้อผิดพลาดในการขอ OTP' });
             }
         }
 
-        // Management Functions
+        // --- MANAGEMENT ---
         function addClass() {
             const name = document.getElementById('new-class-name').value.trim();
             const desc = document.getElementById('new-class-desc').value.trim();
-            if (!name) {
-                Swal.fire({ icon: 'warning', title: 'กรุณากรอกชื่อห้องเรียน' });
-                return;
-            }
+            if (!name) return;
             const id = 'c_' + Date.now();
             window.appState.classes.push({ id, name, desc });
             saveState();
@@ -780,27 +730,15 @@
             renderClassesList();
             document.getElementById('new-class-name').value = '';
             document.getElementById('new-class-desc').value = '';
-            Swal.fire({ icon: 'success', title: 'เพิ่มห้องเรียนเรียบร้อย', timer: 1200, showConfirmButton: false });
         }
 
         function deleteClass(id) {
-            Swal.fire({
-                title: 'ยืนยันการลบ?',
-                text: 'การลบห้องเรียนจะลบนักเรียนในห้องนี้ด้วย',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'ลบ',
-                cancelButtonText: 'ยกเลิก'
-            }).then((res) => {
-                if (res.isConfirmed) {
-                    window.appState.classes = window.appState.classes.filter(c => c.id !== id);
-                    window.appState.students = window.appState.students.filter(s => s.classId !== id);
-                    saveState();
-                    populateClassDropdowns();
-                    renderClassesList();
-                    renderStudentsList();
-                }
-            });
+            window.appState.classes = window.appState.classes.filter(c => c.id !== id);
+            window.appState.students = window.appState.students.filter(s => s.classId !== id);
+            saveState();
+            populateClassDropdowns();
+            renderClassesList();
+            renderStudentsList();
         }
 
         function renderClassesList() {
@@ -811,9 +749,7 @@
                     <td class="p-3.5 font-semibold text-slate-800">${c.name}</td>
                     <td class="p-3.5 text-slate-500">${c.desc || '-'}</td>
                     <td class="p-3.5 text-center">
-                        <button onclick="deleteClass('${c.id}')" class="text-rose-600 hover:text-rose-800 font-semibold px-2 py-1">
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
+                        <button onclick="deleteClass('${c.id}')" class="text-rose-600 hover:text-rose-800 font-semibold px-2 py-1"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 </tr>
             `).join('');
@@ -827,7 +763,7 @@
             const name = document.getElementById('new-std-name').value.trim();
 
             if (!classId || !no || !stdId || !name) {
-                Swal.fire({ icon: 'warning', title: 'กรุณากรอกข้อมูลนักเรียนให้ครบถ้วน' });
+                Swal.fire({ icon: 'warning', title: 'กรอกข้อมูลให้ครบถ้วน' });
                 return;
             }
 
@@ -839,7 +775,6 @@
             document.getElementById('new-std-no').value = '';
             document.getElementById('new-std-code').value = '';
             document.getElementById('new-std-name').value = '';
-            Swal.fire({ icon: 'success', title: 'เพิ่มนักเรียนเรียบร้อย', timer: 1200, showConfirmButton: false });
         }
 
         function deleteStudent(id) {
@@ -860,9 +795,7 @@
                         <td class="p-3.5 font-medium">${s.name}</td>
                         <td class="p-3.5 text-slate-500">${cls ? cls.name : '-'}</td>
                         <td class="p-3.5 text-center">
-                            <button onclick="deleteStudent('${s.id}')" class="text-rose-600 hover:text-rose-800 font-semibold px-2 py-1">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
+                            <button onclick="deleteStudent('${s.id}')" class="text-rose-600 hover:text-rose-800 font-semibold px-2 py-1"><i class="fa-solid fa-trash"></i></button>
                         </td>
                     </tr>
                 `;
