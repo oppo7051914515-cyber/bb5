@@ -46,7 +46,7 @@
                 <div>
                     <h1 class="font-bold text-lg leading-tight flex items-center">
                         Smart Check-In
-                        <span class="ml-2 text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-semibold px-2 py-0.5 rounded-full">v4.2 Fixed</span>
+                        <span class="ml-2 text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-semibold px-2 py-0.5 rounded-full">v4.3 Auto-Sync</span>
                     </h1>
                     <p class="text-xs text-slate-400">ระบบเช็คชื่อข้ามอุปกรณ์ Real-time</p>
                 </div>
@@ -92,7 +92,7 @@
             <div class="glass-card rounded-2xl shadow-xl p-6 text-center border-t-4 border-blue-600 relative overflow-hidden">
                 <div id="student-state-loading" class="py-8 space-y-3">
                     <i class="fa-solid fa-circle-notch animate-spin text-4xl text-blue-600"></i>
-                    <h3 class="text-base font-bold text-slate-700">กำลังเชื่อมต่อรายชื่อ...</h3>
+                    <h3 class="text-base font-bold text-slate-700">กำลังเชื่อมต่อรายชื่อตามห้องเรียน...</h3>
                 </div>
 
                 <div id="student-state-closed" class="hidden py-4">
@@ -116,10 +116,10 @@
                     <div id="student-step-select" class="space-y-4">
                         <div class="text-left">
                             <label class="block text-xs font-bold text-slate-700 uppercase mb-2">
-                                เลือกชื่อ-นามสกุลของคุณ
+                                เลือกชื่อ-นามสกุลของคุณ (ตามห้องเรียน)
                             </label>
                             <select id="student-dropdown" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3.5 text-slate-800 font-medium focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm text-sm">
-                                <option value="">-- ดึงข้อมูลรายชื่อ... --</option>
+                                <option value="">-- กำลังโหลดรายชื่อนักเรียน... --</option>
                             </select>
                         </div>
 
@@ -351,7 +351,7 @@
 
     </main>
 
-    <!-- JS REALTIME FIX -->
+    <!-- JS AUTO-SYNC FIX -->
     <script>
         const CLOUD_DB_BASE_URL = "https://checkin-realtime-default-rtdb.asia-southeast1.firebasedatabase.app";
 
@@ -668,9 +668,11 @@
                 studentsList.sort((a,b) => (a.no || 0) - (b.no || 0));
 
                 if (studentsList.length > 0) {
-                    dropdown.innerHTML = '<option value="">-- เลือกชื่อของคุณ --</option>' + 
+                    dropdown.innerHTML = '<option value="">-- เลือกชื่อ-นามสกุลของคุณ --</option>' + 
                         studentsList.map(s => `<option value="${s.id}">${s.no}. ${s.name} (${s.stdId || ''})</option>`).join('');
                     if (previousVal) dropdown.value = previousVal;
+                } else {
+                    dropdown.innerHTML = '<option value="">-- ไม่พบรายชื่อนักเรียนในห้องนี้ --</option>';
                 }
 
                 if (currentStudentSelectedId && studentsData[currentStudentSelectedId]) {
@@ -696,7 +698,7 @@
             const selectedId = dropdown.value;
 
             if (!selectedId) {
-                Swal.fire({ icon: 'warning', title: 'โปรดเลือกชื่อของคุณ' });
+                Swal.fire({ icon: 'warning', title: 'โปรดเลือกชื่อของคุณก่อน' });
                 return;
             }
 
