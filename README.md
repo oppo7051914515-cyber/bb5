@@ -46,7 +46,7 @@
                 <div>
                     <h1 class="font-bold text-lg leading-tight flex items-center">
                         Smart Check-In
-                        <span class="ml-2 text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-semibold px-2 py-0.5 rounded-full">v4.1 Fixed</span>
+                        <span class="ml-2 text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-semibold px-2 py-0.5 rounded-full">v4.2 Fixed</span>
                     </h1>
                     <p class="text-xs text-slate-400">ระบบเช็คชื่อข้ามอุปกรณ์ Real-time</p>
                 </div>
@@ -160,7 +160,7 @@
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wide">2. ชื่อวิชา / คาบเรียน</label>
-                        <input type="text" id="teacher-subject-input" placeholder="เช่น วิทยาการคำนวณ คาบ 1" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-slate-800 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none font-medium">
+                        <input type="text" id="teacher-subject-input" placeholder="เช่น สังคมศึกษา คาบ 1" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-slate-800 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none font-medium">
                     </div>
                     <div>
                         <button id="btn-toggle-session" onclick="toggleClassSession()" class="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-semibold p-3 rounded-xl shadow-md transition duration-200 flex items-center justify-center space-x-2 text-sm">
@@ -351,7 +351,7 @@
 
     </main>
 
-    <!-- JS LOGIC DIRECT SYNC FIXED -->
+    <!-- JS REALTIME FIX -->
     <script>
         const CLOUD_DB_BASE_URL = "https://checkin-realtime-default-rtdb.asia-southeast1.firebasedatabase.app";
 
@@ -459,7 +459,6 @@
 
                 currentSessionId = 'S_' + Date.now();
                 
-                // สร้าง Object นักเรียนและส่งขึ้น คลาวด์ ทันที
                 const sessionStudentsMap = {};
                 classStudents.forEach(s => {
                     sessionStudentsMap[s.id] = {
@@ -629,7 +628,6 @@
             Swal.fire({ icon: 'success', title: 'คัดลอกลิงก์เรียบร้อย', timer: 1000, showConfirmButton: false });
         }
 
-        // --- STUDENT FETCH FIX ---
         async function fetchStudentSessionData() {
             const loadingState = document.getElementById('student-state-loading');
             const closedState = document.getElementById('student-state-closed');
@@ -665,11 +663,6 @@
                     studentsList = studentsData.filter(Boolean);
                 } else if (typeof studentsData === 'object') {
                     studentsList = Object.values(studentsData);
-                }
-
-                // Fallback ถ้ารายชื่อจากคลาวด์ยังไม่มา ให้ใช้รายชื่อ local
-                if (studentsList.length === 0 && window.appState.students) {
-                    studentsList = window.appState.students;
                 }
 
                 studentsList.sort((a,b) => (a.no || 0) - (b.no || 0));
@@ -725,7 +718,6 @@
             }
         }
 
-        // --- MANAGEMENT ---
         function addClass() {
             const name = document.getElementById('new-class-name').value.trim();
             const desc = document.getElementById('new-class-desc').value.trim();
